@@ -80,3 +80,18 @@ def test_malformed_scanner_output_never_clean(tool,data):
 def test_secret_redaction():
     assert 'secret123' not in redact('postgresql://u:secret123@db/wallet')
     assert 'token123' not in redact('Bearer token123')
+
+
+def test_dast_preflight_failure_is_recorded_as_missing_coverage(tmp_path,monkeypatch):
+    from security.dast import main
+    config = tmp_path/'target.json'
+    config.write_text(json.dumps({'target':'http://user:pass@127.0.0.1:8000','allowlist':[],
+                                  'authorization':'test'}))
+    output = tmp_path/'reports'
+    monkeypatch.setattr('sys.argv',['dast','--config',str(config),'--output',str(output)])
+    with pytest.raises(ValueError):
+        main()
+    manifest = json.loads((output/'manifest.json').read_text())
+    report = consolidate(manifest)
+    assert manifest['runs'][0]['status']=='failed' and report['errors'] and gate(report)
+    assert 'user:pass' not in (output/'manifest.json').read_text()

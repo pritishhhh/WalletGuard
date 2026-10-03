@@ -101,6 +101,16 @@ def main():
     parser.add_argument('--zap-jar',help='Portable ZAP jar path; otherwise use local zap.sh')
     parser.add_argument('--prepare-only',action='store_true')
     args = parser.parse_args()
+    output = Path(args.output).resolve()
+    output.mkdir(parents=True,exist_ok=True)
+    path = output/'manifest.json'
+    started_at = datetime.now(timezone.utc).isoformat()
+    manifest = json.loads(path.read_text()) if path.exists() else {'runs':[]}
+    manifest['runs'] = [r for r in manifest['runs'] if r['tool']!='zap']
+    manifest['runs'].append({'tool':'zap','scope':'unverified-target:'+args.profile,'status':'failed',
+                             'exit_code':None,'file':str(output/'zap.json'),'started_at':started_at,
+                             'limitation':'DAST preflight, preparation or execution did not complete'})
+    path.write_text(json.dumps(manifest,indent=2),encoding='utf-8')
     config = json.loads(Path(args.config).read_text())
     if args.compose:
         # Resolve the scanner origin from its own isolated Docker network, before any HTTP requests.
@@ -130,8 +140,6 @@ def main():
         spec = prepare_spec(response.json(),target,args.profile)
     runtime = Path('security/.runtime').resolve()
     runtime.mkdir(parents=True,exist_ok=True)
-    output = Path(args.output).resolve()
-    output.mkdir(parents=True,exist_ok=True)
     (output/'authorization-checks.json').write_text(json.dumps({'target':target,'identity_status':200,'checks':checks},indent=2))
     spec_path = runtime/'openapi.json'
     spec_path.write_text(json.dumps(spec),encoding='utf-8')
@@ -178,7 +186,7 @@ def main():
     manifest = json.loads(path.read_text()) if path.exists() else {'runs':[]}
     manifest['runs'] = [r for r in manifest['runs'] if r['tool']!='zap']
     manifest['runs'].append({'tool':'zap','scope':target+':'+args.profile,'status':status,'exit_code':result.returncode,
-                             'file':str(report_file),'started_at':datetime.now(timezone.utc).isoformat()})
+                             'file':str(report_file),'started_at':started_at})
     path.write_text(json.dumps(manifest,indent=2),encoding='utf-8')
     report = consolidate(manifest,exceptions=json.loads(Path('security/exceptions.json').read_text()),
                          triage=json.loads(Path('security/triage.json').read_text()))

@@ -39,7 +39,7 @@ services:
     ports: ["127.0.0.1:8000:8000"]
     depends_on:
       migrate: {condition: service_completed_successfully}
-    networks: [wallet-internal]
+    networks: [wallet-internal, wallet-host]
     read_only: true
     tmpfs: ["/tmp"]
     cap_drop: [ALL]
@@ -64,5 +64,7 @@ services:
 networks:
   wallet-internal:
     internal: true
+  wallet-host:
+    driver: bridge
 volumes:
   wallet-data:

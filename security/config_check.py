@@ -20,6 +20,9 @@ def checks(config):
             failures.append(('WG-CONFIG-PRIV','Privilege escalation must be disabled'))
     if not config['networks']['wallet-internal'].get('internal'):
         failures.append(('WG-CONFIG-NETWORK','Local test network must be internal'))
+    for name in ['db','migrate','zap']:
+        if set(services[name].get('networks',[])) != {'wallet-internal'}:
+            failures.append(('WG-CONFIG-ISOLATION','Database, migration and scanner must use only the internal network'))
     return failures
 
 
@@ -27,7 +30,7 @@ def main():
     failures = checks(yaml.safe_load(Path('compose.yaml').read_text()))
     output = Path('reports/current/compose-checks.json')
     output.parent.mkdir(parents=True,exist_ok=True)
-    output.write_text(json.dumps({'checks':7,'findings':[{'rule':rule,'component':'compose.yaml','severity':'high',
+    output.write_text(json.dumps({'checks':10,'findings':[{'rule':rule,'component':'compose.yaml','severity':'high',
                                    'evidence':message,'fix':message,'owasp':['A02:2025']} for rule,message in failures]},indent=2))
     manifest_path = output.parent/'manifest.json'
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {'runs':[]}

@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import secrets
 import subprocess
+import urllib.request
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--start',action='store_true')
@@ -16,3 +17,8 @@ elif 'WG_DB_PASSWORD=' not in path.read_text():
 print('Local credentials ready in ignored .env file.')
 if args.start:
     subprocess.run(['docker','compose','up','--build','-d','--wait','wallet-api'],check=True)
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with opener.open('http://127.0.0.1:8000/ready',timeout=5) as response:
+        if response.status != 200:
+            raise RuntimeError('Published local API did not become ready')
+    print('Local API ready at http://127.0.0.1:8000/docs')
