@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-10-02T22:41:02.158203+00:00",
+  "coverage": [
+    [
+      "gitleaks",
+      "repository"
+    ],
+    [
+      "pip-audit",
+      "runtime-dependencies"
+    ],
+    [
+      "security-tests",
+      "compose"
+    ],
+    [
+      "semgrep",
+      "secure-source"
+    ],
+    [
+      "trivy-config",
+      "deployment"
+    ],
+    [
+      "zap",
+      "http://127.0.0.1:8000:active"
+    ],
+    [
+      "zap",
+      "http://127.0.0.1:8000:passive"
+    ]
+  ],
+  "errors": [
+    "trivy-image (container:walletguard:local): unavailable"
+  ],
+  "runs": [
+    {
+      "tool": "semgrep",
+      "scope": "secure-source",
+      "file": "reports/sample/semgrep.json",
+      "started_at": "2026-10-02T22:36:49.222881+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 4.797
+    },
+    {
+      "tool": "pip-audit",
+      "scope": "runtime-dependencies",
+      "file": "reports/sample/pip-audit.json",
+      "started_at": "2026-10-02T22:36:54.022830+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 1.437
+    },
+    {
+      "tool": "trivy-config",
+      "scope": "deployment",
+      "file": "reports/sample/trivy-config.json",
+      "started_at": "2026-10-02T22:36:55.464366+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 1.25
+    },
+    {
+      "tool": "gitleaks",
+      "scope": "repository",
+      "file": "reports/sample/gitleaks.json",
+      "started_at": "2026-10-02T22:36:56.703184+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 0.563
+    },
+    {
+      "tool": "security-tests",
+      "scope": "compose",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/compose-checks.json"
+    },
+    {
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:passive",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/zap.json",
+      "started_at": "2026-10-02T22:38:47.604512+00:00"
+    },
+    {
+      "tool": "trivy-image",
+      "scope": "container:walletguard:local",
+      "status": "unavailable",
+      "exit_code": null,
+      "file": "reports/sample/trivy-image.json",
+      "limitation": "Not run: image build blocked by absent/unresponsive Docker Desktop Linux engine; bounded 20-second version query timed out after startup"
+    },
+    {
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:active",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/zap-active.json",
+      "started_at": "2026-10-02T22:19:20.804241+00:00"
+    }
+  ],
+  "findings": [
+    {
+      "id": "52a4087a13e54ffb4254",
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:active",
+      "rule": "10104",
+      "component": "http://127.0.0.1:8000",
+      "severity": "info",
+      "evidence": "User Agent Fuzzer   Method: GET; parameter: Header User-Agent; payload: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+      "recommended_fix": "Compare the same authenticated request with different User-Agent headers; review unexpected status codes or response data. This informational alert alone does not prove a vulnerability.",
+      "cwe": [],
+      "owasp": [],
+      "reproduction": "Rerun zap for scope http://127.0.0.1:8000:active; inspect rule 10104 at http://127.0.0.1:8000.",
+      "impact": "Assess exploitability and exposure from the preserved evidence.",
+      "retest_result": "Pending developer retest",
+      "triage_state": "unreviewed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.158203+00:00",
+      "last_seen": "2026-10-02T22:41:02.158203+00:00"
+    },
+    {
+      "id": "8e9b3d664923898beed6",
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:active",
+      "rule": "10104",
+      "component": "http://127.0.0.1:8000/transfers",
+      "severity": "info",
+      "evidence": "User Agent Fuzzer   Method: POST; parameter: Header User-Agent; payload: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+      "recommended_fix": "Compare the same authenticated request with different User-Agent headers; review unexpected status codes or response data. This informational alert alone does not prove a vulnerability.",
+      "cwe": [],
+      "owasp": [],
+      "reproduction": "Rerun zap for scope http://127.0.0.1:8000:active; inspect rule 10104 at http://127.0.0.1:8000/transfers.",
+      "impact": "Assess exploitability and exposure from the preserved evidence.",
+      "retest_result": "Pending developer retest",
+      "triage_state": "unreviewed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.158203+00:00",
+      "last_seen": "2026-10-02T22:41:02.158203+00:00"
+    },
+    {
+      "id": "81047d8d4be1b2323e2e",
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:active",
+      "rule": "10104",
+      "component": "http://127.0.0.1:8000/wallets/",
+      "severity": "info",
+      "evidence": "User Agent Fuzzer   Method: GET; parameter: Header User-Agent; payload: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+      "recommended_fix": "Compare the same authenticated request with different User-Agent headers; review unexpected status codes or response data. This informational alert alone does not prove a vulnerability.",
+      "cwe": [],
+      "owasp": [],
+      "reproduction": "Rerun zap for scope http://127.0.0.1:8000:active; inspect rule 10104 at http://127.0.0.1:8000/wallets/.",
+      "impact": "Assess exploitability and exposure from the preserved evidence.",
+      "retest_result": "Pending developer retest",
+      "triage_state": "unreviewed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.158203+00:00",
+      "last_seen": "2026-10-02T22:41:02.158203+00:00"
+    }
+  ]
+}

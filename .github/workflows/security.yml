@@ -1,0 +1,89 @@
+name: WalletGuard tests and security
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      active_dast:
+        description: Run active DAST against the disposable local CI target
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: walletguard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: walletguard_test
+          POSTGRES_USER: walletguard
+          # Disposable CI database on a private runner; no real credentials or funds.
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U walletguard -d walletguard_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://walletguard@127.0.0.1:5432/walletguard_test
+      DATABASE_URL: postgresql+psycopg://walletguard@127.0.0.1:5432/walletguard_test
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install pinned application and testing dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Migrate fresh database
+        run: alembic upgrade head
+      - name: Tests, parallel correctness and reconciliation
+        run: |
+          python -m pytest -q --junitxml=reports/current/pytest.xml
+          python -m walletguard.cli reconcile --output reports/current/reconciliation.json
+          python -m ruff check walletguard security tests scripts teaching migrations
+          python -m security.config_check
+      - name: Install pinned scanners with verified binary archives
+        run: |
+          python -m venv security/.runtime/scanners
+          security/.runtime/scanners/bin/pip install -r security/scanners.in
+          python scripts/install_scanners.py
+      - name: SAST, dependencies, secrets and configuration
+        run: |
+          python -m security.scan static --semgrep security/.runtime/scanners/bin/semgrep --pip-audit security/.runtime/scanners/bin/pip-audit --trivy security/.runtime/bin/trivy --gitleaks security/.runtime/bin/gitleaks
+      - name: Verify intentional teaching findings and secure regressions
+        run: |
+          python -m teaching.evidence
+          security/.runtime/scanners/bin/semgrep scan --config security/semgrep.yml --metrics off --disable-version-check --json --output reports/teaching/semgrep.json teaching/vulnerable.py
+          python -m pytest -q tests/test_wallet.py -k 'cross_user or injection or cors'
+      - name: Build and start disposable reference target
+        run: python scripts/init_local.py --start
+      - name: Container vulnerabilities
+        run: python -m security.scan container --trivy security/.runtime/bin/trivy
+      - name: Passive authenticated ZAP on pull requests; active scan only on explicit dispatch
+        env:
+          ACTIVE_DAST: ${{ inputs.active_dast }}
+        run: |
+          PROFILE=passive
+          if [ "$ACTIVE_DAST" = "true" ]; then PROFILE=active; fi
+          export WG_SCAN_UID=$(id -u) WG_SCAN_GID=$(id -g)
+          python -m security.dast --config security/target.ci.json --profile "$PROFILE" --seed-wallet --compose
+      - name: Consolidated report and severity gate
+        if: always()
+        run: python -m security.findings --manifest reports/current/manifest.json --output reports/current --gate
+      - name: Upload actual reports and diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: walletguard-security-${{ github.run_id }}
+          path: reports/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Stop disposable containers
+        if: always()
+        run: docker compose down --volumes

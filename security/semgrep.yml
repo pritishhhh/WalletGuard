@@ -1,0 +1,58 @@
+rules:
+  - id: walletguard-sql-interpolation
+    languages: [python]
+    severity: ERROR
+    message: SQL assembled from interpolated input; use bound parameters.
+    metadata:
+      cwe: ["CWE-89"]
+      owasp: ["A05:2025 Injection"]
+    pattern-either:
+      - pattern: $DB.execute(f"...")
+      - pattern: $DB.execute("..." + $INPUT)
+      - pattern: $DB.execute("..." + $INPUT + "...")
+      - pattern: $DB.execute("..." % $INPUT)
+      - pattern: text(f"...")
+  - id: walletguard-command-shell
+    languages: [python]
+    severity: ERROR
+    message: Shell execution expands untrusted arguments; pass an argument list with shell disabled.
+    metadata: {cwe: ["CWE-78"], owasp: ["A05:2025 Injection"]}
+    pattern-either:
+      - pattern: subprocess.$METHOD(..., shell=True, ...)
+      - pattern: os.system(...)
+  - id: walletguard-wildcard-cors
+    languages: [python]
+    severity: WARNING
+    message: Wildcard CORS exposes API responses to arbitrary origins; define explicit origins.
+    metadata: {cwe: ["CWE-942"], owasp: ["A02:2025 Security Misconfiguration"]}
+    pattern: $APP.add_middleware(..., allow_origins=["*"], ...)
+  - id: walletguard-debug
+    languages: [python]
+    severity: WARNING
+    message: Debug mode may expose sensitive exception details; disable it in deployed applications.
+    metadata: {cwe: ["CWE-209"], owasp: ["A02:2025 Security Misconfiguration"]}
+    pattern: FastAPI(..., debug=True, ...)
+  - id: walletguard-unsafe-deserialization
+    languages: [python]
+    severity: ERROR
+    message: Unsafe deserialization permits execution; use a safe data parser.
+    metadata: {cwe: ["CWE-502"], owasp: ["A08:2025 Software or Data Integrity Failures"]}
+    pattern-either:
+      - pattern: pickle.loads(...)
+      - pattern: yaml.load(...)
+  - id: walletguard-insecure-http-client
+    languages: [python]
+    severity: ERROR
+    message: TLS verification must remain enabled for remote communication.
+    metadata: {cwe: ["CWE-295"], owasp: ["A04:2025 Cryptographic Failures"]}
+    pattern-either:
+      - pattern: httpx.$METHOD(..., verify=False, ...)
+      - pattern: requests.$METHOD(..., verify=False, ...)
+  - id: walletguard-dynamic-eval
+    languages: [python]
+    severity: ERROR
+    message: Dynamic code execution requires review; avoid eval/exec on input.
+    metadata: {cwe: ["CWE-95"], owasp: ["A05:2025 Injection"]}
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)

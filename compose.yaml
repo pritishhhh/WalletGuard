@@ -1,0 +1,68 @@
+name: walletguard
+services:
+  db:
+    image: postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+    environment:
+      POSTGRES_DB: walletguard
+      POSTGRES_USER: walletguard
+      POSTGRES_PASSWORD: ${WG_DB_PASSWORD:?Run python scripts/init_local.py first}
+    volumes: ["wallet-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U walletguard -d walletguard"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [wallet-internal]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+  migrate:
+    build: .
+    image: walletguard:local
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://walletguard:${WG_DB_PASSWORD}@db:5432/walletguard
+    depends_on:
+      db: {condition: service_healthy}
+    networks: [wallet-internal]
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+  wallet-api:
+    build: .
+    image: walletguard:local
+    environment:
+      DATABASE_URL: postgresql+psycopg://walletguard:${WG_DB_PASSWORD}@db:5432/walletguard
+      WG_PROFILE: local
+      WG_LOCAL_FUNDING: "true"
+      WG_ALLOWED_HOSTS: localhost,127.0.0.1,wallet-api
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    networks: [wallet-internal]
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 2
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:2.17.0
+    profiles: [security]
+    entrypoint: ["zap.sh"]
+    command: ["-cmd", "-autorun", "/zap/wrk/zap-plan.yaml", "-silent", "-dir", "/zap/wrk/zap-home"]
+    user: "${WG_SCAN_UID:-1000}:${WG_SCAN_GID:-1000}"
+    environment:
+      ZAP_AUTH_HEADER: Authorization
+      ZAP_AUTH_HEADER_VALUE: ${ZAP_AUTH_HEADER_VALUE:-}
+      ZAP_AUTH_HEADER_SITE: wallet-api
+    volumes: ["./security/.runtime:/zap/wrk:rw"]
+    networks: [wallet-internal]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+networks:
+  wallet-internal:
+    internal: true
+volumes:
+  wallet-data:

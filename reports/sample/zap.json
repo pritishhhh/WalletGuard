@@ -1,0 +1,82 @@
+{
+  "@programName": "ZAP",
+  "@version": "2.17.0",
+  "@generated": "Sat, 3 Oct 2026 04:08:41",
+  "created": "2026-10-02T22:38:41.225632500Z",
+  "insights": [
+    {
+      "level": "Low",
+      "reason": "Warning",
+      "site": "",
+      "key": "insight.log.error",
+      "description": "ZAP errors logged - see the zap.log file for details",
+      "statistic": "3"
+    },
+    {
+      "level": "Low",
+      "reason": "Warning",
+      "site": "",
+      "key": "insight.log.warn",
+      "description": "ZAP warnings logged - see the zap.log file for details",
+      "statistic": "2"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.2xx",
+      "description": "Percentage of responses with status code 2xx",
+      "statistic": "75"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.3xx",
+      "description": "Percentage of responses with status code 3xx",
+      "statistic": "8"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.4xx",
+      "description": "Percentage of responses with status code 4xx",
+      "statistic": "16"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.ctype.application/json",
+      "description": "Percentage of endpoints with content type application/json",
+      "statistic": "88"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.method.GET",
+      "description": "Percentage of endpoints with method GET",
+      "statistic": "100"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.total",
+      "description": "Count of total endpoints",
+      "statistic": "9"
+    }
+  ],
+  "site": [
+    {
+      "@name": "http://127.0.0.1:8000",
+      "@host": "127.0.0.1",
+      "@port": "8000",
+      "@ssl": "false",
+      "alerts": []
+    }
+  ],
+  "sequences": []
+}

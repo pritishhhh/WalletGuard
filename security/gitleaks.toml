@@ -1,0 +1,7 @@
+title = "WalletGuard secret policy"
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated local environment and scanner artifacts are excluded from source scanning; never committed"
+paths = ['''^\.env$''', '''^reports/current/''', '''^security/\.runtime/''', '''^\.venv/''']

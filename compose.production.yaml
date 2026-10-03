@@ -1,0 +1,18 @@
+# Example overlay only. Provision external PostgreSQL, TLS proxy and secrets first.
+services:
+  wallet-api:
+    environment:
+      DATABASE_URL: ${WG_PRODUCTION_DATABASE_URL:?Provide verified TLS database URL}
+      WG_PROFILE: production
+      WG_LOCAL_FUNDING: "false"
+      WG_ALLOWED_HOSTS: ${WG_PRODUCTION_HOSTS:?Provide allowed hosts}
+      WG_CORS_ORIGINS: ${WG_PRODUCTION_CORS_ORIGINS:-}
+    depends_on: !reset {}
+    networks: [production-egress]
+  migrate:
+    environment:
+      DATABASE_URL: ${WG_PRODUCTION_MIGRATION_URL:?Provide separate migration identity}
+    depends_on: !reset {}
+    networks: [production-egress]
+networks:
+  production-egress: {}

@@ -1,0 +1,183 @@
+{
+  "generated_at": "2026-10-02T22:41:02.166203+00:00",
+  "coverage": [
+    [
+      "security-tests",
+      "isolated-teaching"
+    ],
+    [
+      "semgrep",
+      "isolated-teaching"
+    ]
+  ],
+  "errors": [],
+  "runs": [
+    {
+      "tool": "semgrep",
+      "scope": "isolated-teaching",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/teaching/semgrep.json"
+    },
+    {
+      "tool": "security-tests",
+      "scope": "isolated-teaching",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/teaching/security-tests.json"
+    }
+  ],
+  "findings": [
+    {
+      "id": "5cc6cb5ddb4c3ecf41af",
+      "tool": "semgrep",
+      "scope": "isolated-teaching",
+      "rule": "security.walletguard-sql-interpolation",
+      "component": "teaching/vulnerable.py",
+      "severity": "high",
+      "evidence": "line 21: SQL assembled from interpolated input; use bound parameters.",
+      "recommended_fix": "SQL assembled from interpolated input; use bound parameters.",
+      "cwe": [
+        "CWE-89"
+      ],
+      "owasp": [
+        "A05:2025 Injection"
+      ],
+      "reproduction": "Rerun semgrep for scope isolated-teaching; inspect rule security.walletguard-sql-interpolation at teaching/vulnerable.py.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    },
+    {
+      "id": "0467dc8675a29cb98781",
+      "tool": "security-tests",
+      "scope": "isolated-teaching",
+      "rule": "WG-SQL-001",
+      "component": "teaching/vulnerable.py:/search",
+      "severity": "high",
+      "evidence": "owner=alice' OR 1=1-- returned both Alice and Bob rows (2).",
+      "recommended_fix": "Use bound SQL and validated UUIDs; secure API injection regression returns 422.",
+      "cwe": [
+        "CWE-89"
+      ],
+      "owasp": [
+        "A05:2025"
+      ],
+      "reproduction": "Rerun security-tests for scope isolated-teaching; inspect rule WG-SQL-001 at teaching/vulnerable.py:/search.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    },
+    {
+      "id": "ab80902e0d2c50db6ee2",
+      "tool": "security-tests",
+      "scope": "isolated-teaching",
+      "rule": "WG-BOLA-001",
+      "component": "teaching/vulnerable.py:/wallets/{id}",
+      "severity": "high",
+      "evidence": "Unauthenticated GET /wallets/1 returned HTTP 200 with Alice balance 1000.",
+      "recommended_fix": "Require bearer [REDACTED] and owner predicate; secure API test_cross_user_wallet_endpoints returns 404.",
+      "cwe": [
+        "CWE-639"
+      ],
+      "owasp": [
+        "API1:2023",
+        "A01:2025"
+      ],
+      "reproduction": "Rerun security-tests for scope isolated-teaching; inspect rule WG-BOLA-001 at teaching/vulnerable.py:/wallets/{id}.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    },
+    {
+      "id": "42387f54fde12aec64bd",
+      "tool": "security-tests",
+      "scope": "isolated-teaching",
+      "rule": "WG-CORS-001",
+      "component": "teaching/vulnerable.py",
+      "severity": "medium",
+      "evidence": "Untrusted Origin preflight returned access-control-allow-origin: *.",
+      "recommended_fix": "Default to no permitted cross-origin clients; secure API preflight omits allow-origin.",
+      "cwe": [
+        "CWE-942"
+      ],
+      "owasp": [
+        "A02:2025"
+      ],
+      "reproduction": "Rerun security-tests for scope isolated-teaching; inspect rule WG-CORS-001 at teaching/vulnerable.py.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    },
+    {
+      "id": "5a887033545cf564668d",
+      "tool": "semgrep",
+      "scope": "isolated-teaching",
+      "rule": "security.walletguard-wildcard-cors",
+      "component": "teaching/vulnerable.py",
+      "severity": "medium",
+      "evidence": "line 9: Wildcard CORS exposes API responses to arbitrary origins; define explicit origins.",
+      "recommended_fix": "Wildcard CORS exposes API responses to arbitrary origins; define explicit origins.",
+      "cwe": [
+        "CWE-942"
+      ],
+      "owasp": [
+        "A02:2025 Security Misconfiguration"
+      ],
+      "reproduction": "Rerun semgrep for scope isolated-teaching; inspect rule security.walletguard-wildcard-cors at teaching/vulnerable.py.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    },
+    {
+      "id": "aadfcf8f86d21f2173c8",
+      "tool": "semgrep",
+      "scope": "isolated-teaching",
+      "rule": "security.walletguard-debug",
+      "component": "teaching/vulnerable.py",
+      "severity": "medium",
+      "evidence": "line 8: Debug mode may expose sensitive exception details; disable it in deployed applications.",
+      "recommended_fix": "Debug mode may expose sensitive exception details; disable it in deployed applications.",
+      "cwe": [
+        "CWE-209"
+      ],
+      "owasp": [
+        "A02:2025 Security Misconfiguration"
+      ],
+      "reproduction": "Rerun semgrep for scope isolated-teaching; inspect rule security.walletguard-debug at teaching/vulnerable.py.",
+      "impact": "Teaching fixture exposes unauthorized data or unsafe configuration; it is excluded from the deployed image.",
+      "retest_result": "Secure counterpart regression tests passed; teaching fixture intentionally retains the weakness.",
+      "triage_state": "confirmed",
+      "status": "new",
+      "first_seen": "2026-10-02T22:41:02.166203+00:00",
+      "last_seen": "2026-10-02T22:41:02.166203+00:00",
+      "triage_owner": "WalletGuard teaching maintainer",
+      "triage_reason": "Intentional isolated weakness demonstrated by real scan or HTTP response"
+    }
+  ]
+}

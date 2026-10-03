@@ -1,0 +1,141 @@
+{
+  "@programName": "ZAP",
+  "@version": "2.17.0",
+  "@generated": "Sat, 3 Oct 2026 03:49:15",
+  "created": "2026-10-02T22:19:15.203655600Z",
+  "insights": [
+    {
+      "level": "Low",
+      "reason": "Warning",
+      "site": "",
+      "key": "insight.log.error",
+      "description": "ZAP errors logged - see the zap.log file for details",
+      "statistic": "5"
+    },
+    {
+      "level": "Low",
+      "reason": "Warning",
+      "site": "",
+      "key": "insight.log.warn",
+      "description": "ZAP warnings logged - see the zap.log file for details",
+      "statistic": "14"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.2xx",
+      "description": "Percentage of responses with status code 2xx",
+      "statistic": "5"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.3xx",
+      "description": "Percentage of responses with status code 3xx",
+      "statistic": "6"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.code.4xx",
+      "description": "Percentage of responses with status code 4xx",
+      "statistic": "93"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.ctype.application/json",
+      "description": "Percentage of endpoints with content type application/json",
+      "statistic": "90"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.method.GET",
+      "description": "Percentage of endpoints with method GET",
+      "statistic": "80"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.method.POST",
+      "description": "Percentage of endpoints with method POST",
+      "statistic": "20"
+    },
+    {
+      "level": "Info",
+      "reason": "Informational",
+      "site": "http://127.0.0.1:8000",
+      "key": "insight.endpoint.total",
+      "description": "Count of total endpoints",
+      "statistic": "10"
+    }
+  ],
+  "site": [
+    {
+      "@name": "http://127.0.0.1:8000",
+      "@host": "127.0.0.1",
+      "@port": "8000",
+      "@ssl": "false",
+      "alerts": [
+        {
+          "pluginid": "10104",
+          "alertRef": "10104",
+          "alert": "User Agent Fuzzer",
+          "name": "User Agent Fuzzer",
+          "riskcode": "0",
+          "confidence": "2",
+          "riskdesc": "Informational (Medium)",
+          "desc": "<p>Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.</p>",
+          "instances": [
+            {
+              "id": "4",
+              "uri": "http://127.0.0.1:8000",
+              "nodeName": "http://127.0.0.1:8000",
+              "method": "GET",
+              "param": "Header User-Agent",
+              "attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+              "evidence": "",
+              "otherinfo": ""
+            },
+            {
+              "id": "0",
+              "uri": "http://127.0.0.1:8000/wallets/",
+              "nodeName": "http://127.0.0.1:8000/wallets/",
+              "method": "GET",
+              "param": "Header User-Agent",
+              "attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+              "evidence": "",
+              "otherinfo": ""
+            },
+            {
+              "id": "3",
+              "uri": "http://127.0.0.1:8000/transfers",
+              "nodeName": "http://127.0.0.1:8000/transfers ()({source_id,destination_id,amount_minor})",
+              "method": "POST",
+              "param": "Header User-Agent",
+              "attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+              "evidence": "",
+              "otherinfo": ""
+            }
+          ],
+          "count": "3",
+          "systemic": true,
+          "solution": "",
+          "otherinfo": "",
+          "reference": "<p>https://owasp.org/wstg</p>",
+          "cweid": "0",
+          "wascid": "0",
+          "sourceid": "25"
+        }
+      ]
+    }
+  ],
+  "sequences": []
+}

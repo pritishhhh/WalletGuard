@@ -1,0 +1,45 @@
+{
+  "fixture_only": true,
+  "findings": [
+    {
+      "rule": "WG-BOLA-001",
+      "component": "teaching/vulnerable.py:/wallets/{id}",
+      "severity": "high",
+      "evidence": "Unauthenticated GET /wallets/1 returned HTTP 200 with Alice balance 1000.",
+      "fix": "Require bearer identity and owner predicate; secure API test_cross_user_wallet_endpoints returns 404.",
+      "cwe": [
+        "CWE-639"
+      ],
+      "owasp": [
+        "API1:2023",
+        "A01:2025"
+      ]
+    },
+    {
+      "rule": "WG-SQL-001",
+      "component": "teaching/vulnerable.py:/search",
+      "severity": "high",
+      "evidence": "owner=alice' OR 1=1-- returned both Alice and Bob rows (2).",
+      "fix": "Use bound SQL and validated UUIDs; secure API injection regression returns 422.",
+      "cwe": [
+        "CWE-89"
+      ],
+      "owasp": [
+        "A05:2025"
+      ]
+    },
+    {
+      "rule": "WG-CORS-001",
+      "component": "teaching/vulnerable.py",
+      "severity": "medium",
+      "evidence": "Untrusted Origin preflight returned access-control-allow-origin: *.",
+      "fix": "Default to no permitted cross-origin clients; secure API preflight omits allow-origin.",
+      "cwe": [
+        "CWE-942"
+      ],
+      "owasp": [
+        "A02:2025"
+      ]
+    }
+  ]
+}

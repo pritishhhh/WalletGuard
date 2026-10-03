@@ -1,0 +1,18 @@
+{
+  "runs": [
+    {
+      "tool": "semgrep",
+      "scope": "isolated-teaching",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/teaching/semgrep.json"
+    },
+    {
+      "tool": "security-tests",
+      "scope": "isolated-teaching",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/teaching/security-tests.json"
+    }
+  ]
+}

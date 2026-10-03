@@ -1,0 +1,22 @@
+{
+  "reports\\sample\\authorization-checks.json": "2b66e30dd03489820659936caea862a1393a23b0adbd75b4abcf5fc23001cab9",
+  "reports\\sample\\compose-checks.json": "9ab2a6044ed1943bb62e62906bd7ea1e6838bc246e6cfe3a79ecacfc2a54601b",
+  "reports\\sample\\findings.html": "17bc0989d90a14119f3f5fbfb318fb7d1883b4959d0518b580d48a79588f80da",
+  "reports\\sample\\findings.json": "34d737f5b65180edb01b81f2d07b3c76f859bb82ce2d22069cf8ff450195b932",
+  "reports\\sample\\findings.md": "67a635dc07f0db12baacf48cf8a201011254ac6f2e9ddd2b2147af6658016214",
+  "reports\\sample\\gitleaks.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "reports\\sample\\manifest.json": "c2ac2a3b03b757762ce3627c755ef5636a61d40e122c00ffb01fd38e98740af7",
+  "reports\\sample\\pip-audit.json": "7fc0a2bcccc04ef5fd6379dad39351a7002b594ede9c320b79032444bf16f9cc",
+  "reports\\sample\\pytest.xml": "3cb7097e18ec9704c9bf7be26268e36e25a57ad8fb8a347e6517fd0dc3388f93",
+  "reports\\sample\\reconciliation.json": "95c026c7acd5f370b7160f85778c42b11228371a8451a20d1a94575ed2a5800a",
+  "reports\\sample\\semgrep.json": "506b4df963c7e0c3a2997f60c3ad722e5a98a62ab3803012c6b0172d2641f554",
+  "reports\\sample\\trivy-config.json": "92f3fe998781ba6c07be1ec31ba0695dc4a0e6210edebd1b095b031a835ba0dd",
+  "reports\\sample\\zap-active.json": "38f8e0a3ac88b18ae8101028d282ebcd08c3864ff25a1a026d93df83045286fc",
+  "reports\\sample\\zap.json": "ef12359dedadf4d131385e1e26ba71432b75dbf73d801dec6e0b9f9ccfe9a303",
+  "reports\\teaching\\findings.html": "710b40e58dec95bb05f626b7a888e6bfb91dca9e9d9f5ca1f6b04182a31e7716",
+  "reports\\teaching\\findings.json": "3b8485a13b6e4d7bd70eef69f9e966b8577970e4dd83a28ada5ed85b841db17d",
+  "reports\\teaching\\findings.md": "93c0e0398b423878a135189e5b0541def802e91ff8cec677436cad10bb843fe0",
+  "reports\\teaching\\manifest.json": "f5cf0daa6255de4c4b3ec6de110cf14c2b993bdbe72de27b96ef8b4fa4f74e1c",
+  "reports\\teaching\\security-tests.json": "0c35bcf66c76ff1e91931478ca06b3594217196016c368d2bc2e5e57f6798d13",
+  "reports\\teaching\\semgrep.json": "b94f46ba65430a29c5477fd3efc617757e063bb601c2f13ff31cce96103ecdb8"
+}

@@ -1,0 +1,18 @@
+[project]
+name = "walletguard"
+version = "1.0.0"
+description = "Authorized internal wallet API security reference"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["integration: requires migrated PostgreSQL database", "stress: parallel database correctness"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["security/.runtime", "reports"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

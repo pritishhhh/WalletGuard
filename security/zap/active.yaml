@@ -1,0 +1,41 @@
+env:
+  contexts:
+    - name: walletguard
+      urls: ["${target}"]
+      includePaths: ["${targetRegex}.*"]
+      excludePaths: ["${targetRegex}/auth/.*", "${targetRegex}/docs.*", "${targetRegex}/wallets/.*/fund.*"]
+  parameters:
+    failOnError: true
+    failOnWarning: true
+    progressToStdout: true
+jobs:
+  - type: openapi
+    parameters:
+      apiFile: "${openapiFile}"
+      targetUrl: "${target}"
+      context: walletguard
+  - type: requestor
+    requests:
+      - url: "${target}/auth/me"
+        name: authenticated-normal-user
+        responseCode: 200
+      - url: "${target}/wallets/${walletId}"
+        responseCode: 200
+  - type: activeScan
+    parameters:
+      context: walletguard
+      maxScanDurationInMins: 5
+      maxRuleDurationInMins: 1
+    policyDefinition:
+      defaultStrength: Low
+      defaultThreshold: Medium
+  - type: passiveScan-wait
+    parameters: {maxDuration: 5}
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: "${reportDir}"
+      reportFile: zap
+      reportTitle: WalletGuard real active DAST
+  - type: exitStatus
+    parameters: {errorLevel: High, warnLevel: Medium}

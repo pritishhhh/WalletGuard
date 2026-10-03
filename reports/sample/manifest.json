@@ -1,0 +1,71 @@
+{
+  "runs": [
+    {
+      "tool": "semgrep",
+      "scope": "secure-source",
+      "file": "reports/sample/semgrep.json",
+      "started_at": "2026-10-02T22:36:49.222881+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 4.797
+    },
+    {
+      "tool": "pip-audit",
+      "scope": "runtime-dependencies",
+      "file": "reports/sample/pip-audit.json",
+      "started_at": "2026-10-02T22:36:54.022830+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 1.437
+    },
+    {
+      "tool": "trivy-config",
+      "scope": "deployment",
+      "file": "reports/sample/trivy-config.json",
+      "started_at": "2026-10-02T22:36:55.464366+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 1.25
+    },
+    {
+      "tool": "gitleaks",
+      "scope": "repository",
+      "file": "reports/sample/gitleaks.json",
+      "started_at": "2026-10-02T22:36:56.703184+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 0.563
+    },
+    {
+      "tool": "security-tests",
+      "scope": "compose",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/compose-checks.json"
+    },
+    {
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:passive",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/zap.json",
+      "started_at": "2026-10-02T22:38:47.604512+00:00"
+    },
+    {
+      "tool": "trivy-image",
+      "scope": "container:walletguard:local",
+      "status": "unavailable",
+      "exit_code": null,
+      "file": "reports/sample/trivy-image.json",
+      "limitation": "Not run: image build blocked by absent/unresponsive Docker Desktop Linux engine; bounded 20-second version query timed out after startup"
+    },
+    {
+      "tool": "zap",
+      "scope": "http://127.0.0.1:8000:active",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/sample/zap-active.json",
+      "started_at": "2026-10-02T22:19:20.804241+00:00"
+    }
+  ]
+}

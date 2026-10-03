@@ -1,0 +1,11 @@
+{
+  "name": "WalletGuard isolated CI target",
+  "target": "http://wallet-api:8000",
+  "allowlist": ["http://wallet-api:8000"],
+  "internal_hosts": ["wallet-api"],
+  "authorization": "Disposable Docker Compose CI service on an isolated network",
+  "identity_path": "/auth/me",
+  "openapi_path": "/openapi.json",
+  "client_target": "http://127.0.0.1:8000",
+  "client_allowlist": ["http://127.0.0.1:8000"]
+}

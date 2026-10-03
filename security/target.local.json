@@ -1,0 +1,9 @@
+{
+  "name": "WalletGuard disposable local target",
+  "target": "http://127.0.0.1:8000",
+  "allowlist": ["http://127.0.0.1:8000"],
+  "internal_hosts": [],
+  "authorization": "Local synthetic reference wallet owned by this project",
+  "identity_path": "/auth/me",
+  "openapi_path": "/openapi.json"
+}
