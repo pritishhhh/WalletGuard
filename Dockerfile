@@ -1,8 +1,11 @@
-FROM python:3.12-slim-bookworm@sha256:54c85f3c47607a77f32adec749d3c81d1348bf25833671f512b26a9b6d778cb3
+FROM python:3.12-alpine3.24@sha256:0687a6bc9716edc2a6ee0fbfb0f87e7ee358b262b67c9215de91bc9b2d38ba71
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && groupadd --gid 10001 walletguard && useradd --uid 10001 --gid 10001 --no-create-home walletguard
+RUN python -m pip install --no-cache-dir --only-binary=:all: -r requirements.txt \
+    && python -m pip uninstall -y pip \
+    && addgroup -S -g 10001 walletguard \
+    && adduser -S -D -H -u 10001 -G walletguard -s /sbin/nologin walletguard
 COPY walletguard ./walletguard
 COPY migrations ./migrations
 COPY alembic.ini .

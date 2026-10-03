@@ -22,3 +22,7 @@ Schedule `python -m walletguard.cli cleanup` to remove expired sessions and rate
 - Review dependency/container advisories, medium/low alerts and any expiring exceptions; enforce branch protection on CI.
 - Monitor errors/denials, latency, DB lock waits and audit failures; define incident ownership and rollback controls.
 - Run active DAST only on disposable synthetic deployments with an exact allowlist and isolated egress.
+
+## Runtime image maintenance
+
+The API uses the digest-pinned official Python 3.12 Alpine 3.24 image. Install only prebuilt runtime dependency wheels, then remove pip from the final image. Native build tools and a package installer are unnecessary at runtime. The first GitHub image scan rejected the Debian Bookworm base due to its reported OS vulnerabilities; the replacement base had zero OS findings in a direct Trivy scan on 3 October 2026. CI scans the complete built image with the same severity policy. Refresh the digest and rerun the full workflow when updating the image.
