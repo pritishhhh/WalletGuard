@@ -13,7 +13,33 @@ import subprocess
 from urllib.parse import urlsplit
 import httpx
 import yaml
-from .findings import consolidate, gate, render
+from .findings import consolidate, gate, redact, render
+
+
+def sanitized_log(value, token):
+    if isinstance(value,bytes):
+        value = value.decode('utf-8',errors='replace')
+    return '\n'.join(redact(line.replace(token,'[REDACTED]')) for line in (value or '').splitlines())
+
+
+def execute_zap(command, env, timeout, output, runtime, token):
+    limitation = None
+    try:
+        result = subprocess.run(command,capture_output=True,text=True,encoding='utf-8',errors='replace',
+                                env=env,timeout=timeout,shell=False,stdin=subprocess.DEVNULL)
+        code,stdout,stderr = result.returncode,result.stdout,result.stderr
+    except subprocess.TimeoutExpired as exc:
+        code,stdout,stderr = 124,exc.stdout,exc.stderr
+        limitation = f'ZAP process did not exit within {timeout} seconds'
+    clean_log = sanitized_log(stdout,token)+'\n'+sanitized_log(stderr,token)
+    (output/'zap.log').write_text(clean_log,encoding='utf-8')
+    internal_log = runtime/'zap-home'/'zap.log'
+    if internal_log.exists():
+        (output/'zap-internal.log').write_text(sanitized_log(internal_log.read_bytes(),token),encoding='utf-8')
+    if limitation:
+        print(limitation,flush=True)
+        print('\n'.join(clean_log.splitlines()[-40:]),flush=True)
+    return code,clean_log,limitation
 
 
 def preflight(config, resolve=socket.getaddrinfo):
@@ -100,7 +126,11 @@ def main():
     parser.add_argument('--compose',action='store_true')
     parser.add_argument('--zap-jar',help='Portable ZAP jar path; otherwise use local zap.sh')
     parser.add_argument('--prepare-only',action='store_true')
+    parser.add_argument('--timeout-seconds',type=int,help='Process deadline; defaults to 600 passive / 1200 active seconds')
     args = parser.parse_args()
+    timeout = args.timeout_seconds if args.timeout_seconds is not None else (600 if args.profile=='passive' else 1200)
+    if not 1 <= timeout <= 3600:
+        parser.error('--timeout-seconds must be between 1 and 3600')
     output = Path(args.output).resolve()
     output.mkdir(parents=True,exist_ok=True)
     path = output/'manifest.json'
@@ -175,23 +205,25 @@ def main():
     report_file = output/'zap.json'
     if report_file.exists():
         report_file.unlink()
-    result = subprocess.run(command,capture_output=True,text=True,encoding='utf-8',errors='replace',env=env,timeout=1200,shell=False)
-    # Logs can contain Authorization debug values; never preserve them verbatim.
-    clean_log = (result.stdout+'\n'+result.stderr).replace(token,'[REDACTED]')
-    (output/'zap.log').write_text(clean_log,encoding='utf-8')
+    if args.compose and (runtime/'zap.json').exists():
+        (runtime/'zap.json').unlink()
+    code,clean_log,limitation = execute_zap(command,env,timeout,output,runtime,token)
     if args.compose and (runtime/'zap.json').exists():
         report_file.write_bytes((runtime/'zap.json').read_bytes())
-    status = 'success' if result.returncode in (0,1,2) and report_file.exists() and 'Automation plan failures:' not in clean_log else 'failed'
+    status = 'success' if code in (0,1,2) and report_file.exists() and 'Automation plan failures:' not in clean_log else 'failed'
     path = output/'manifest.json'
     manifest = json.loads(path.read_text()) if path.exists() else {'runs':[]}
     manifest['runs'] = [r for r in manifest['runs'] if r['tool']!='zap']
-    manifest['runs'].append({'tool':'zap','scope':target+':'+args.profile,'status':status,'exit_code':result.returncode,
-                             'file':str(report_file),'started_at':started_at})
+    record = {'tool':'zap','scope':target+':'+args.profile,'status':status,'exit_code':code,
+              'file':str(report_file),'started_at':started_at}
+    if limitation:
+        record['limitation'] = limitation
+    manifest['runs'].append(record)
     path.write_text(json.dumps(manifest,indent=2),encoding='utf-8')
     report = consolidate(manifest,exceptions=json.loads(Path('security/exceptions.json').read_text()),
                          triage=json.loads(Path('security/triage.json').read_text()))
     render(report,output)
-    print(json.dumps({'zap_status':status,'exit_code':result.returncode,'findings':len(report['findings']),
+    print(json.dumps({'zap_status':status,'exit_code':code,'findings':len(report['findings']),
                       'authorization_checks':checks,'gate_failed':gate(report)}))
     if gate(report):
         raise SystemExit(1)

@@ -95,3 +95,32 @@ def test_dast_preflight_failure_is_recorded_as_missing_coverage(tmp_path,monkeyp
     report = consolidate(manifest)
     assert manifest['runs'][0]['status']=='failed' and report['errors'] and gate(report)
     assert 'user:pass' not in (output/'manifest.json').read_text()
+
+
+def test_zap_timeout_preserves_redacted_partial_and_internal_logs(tmp_path,monkeypatch):
+    import subprocess
+    from security.dast import execute_zap
+    token = 'SyntheticSecretForTimeoutTest'
+    runtime = tmp_path/'runtime'
+    home = runtime/'zap-home'
+    home.mkdir(parents=True)
+    (home/'zap.log').write_text('Startup error\nAuthorization: Bearer '+token)
+    def timeout(*args,**kwargs):
+        raise subprocess.TimeoutExpired(args[0],5,output=('Job openapi started\nBearer '+token).encode(),
+                                        stderr=b'blocked operation')
+    monkeypatch.setattr('security.dast.subprocess.run',timeout)
+    code,log,reason = execute_zap(['zap.sh'],{},5,tmp_path,runtime,token)
+    assert code==124 and reason and 'Job openapi started' in log and 'blocked operation' in log
+    assert token not in log and token not in (tmp_path/'zap-internal.log').read_text()
+
+
+def test_zap_completed_scan_logs_redact_credentials(tmp_path,monkeypatch):
+    import subprocess
+    from security.dast import execute_zap
+    def completed(*args,**kwargs):
+        return subprocess.CompletedProcess(args[0],0,'Automation plan succeeded!\nBearer fake-secret',
+                                           'https://user:password123@target/path')
+    monkeypatch.setattr('security.dast.subprocess.run',completed)
+    code,log,reason = execute_zap(['zap.sh'],{},10,tmp_path,tmp_path/'runtime','fake-secret')
+    assert code==0 and reason is None and 'Automation plan succeeded!' in log
+    assert 'fake-secret' not in log and 'password123' not in log

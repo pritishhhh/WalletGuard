@@ -72,7 +72,7 @@ jobs:
           PROFILE=passive
           if [ "$ACTIVE_DAST" = "true" ]; then PROFILE=active; fi
           export WG_SCAN_UID=$(id -u) WG_SCAN_GID=$(id -g)
-          python -m security.dast --config security/target.ci.json --profile "$PROFILE" --seed-wallet --compose
+          python -m security.dast --config security/target.ci.json --profile "$PROFILE" --seed-wallet --compose --timeout-seconds 180
       - name: Consolidated report and severity gate
         if: always()
         run: python -m security.findings --manifest reports/current/manifest.json --output reports/current --gate
