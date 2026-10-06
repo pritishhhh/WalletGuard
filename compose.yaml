@@ -54,6 +54,11 @@ services:
     command: ["-cmd", "-autorun", "/zap/wrk/zap-plan.yaml", "-silent", "-dir", "/zap/wrk/zap-home"]
     user: "${WG_SCAN_UID:-1000}:${WG_SCAN_GID:-1000}"
     environment:
+      HOME: /zap/wrk/zap-home
+      JAVA_TOOL_OPTIONS: -Duser.home=/zap/wrk/zap-home -Djava.util.prefs.userRoot=/zap/wrk/zap-home/java-prefs -Dselenium.firefoxBinary=/usr/bin/firefox-esr
+      SE_CACHE_PATH: /zap/wrk/zap-home/selenium-cache
+      SE_OFFLINE: "true"
+      SE_AVOID_STATS: "true"
       ZAP_AUTH_HEADER: Authorization
       ZAP_AUTH_HEADER_VALUE: ${ZAP_AUTH_HEADER_VALUE:-}
       ZAP_AUTH_HEADER_SITE: wallet-api

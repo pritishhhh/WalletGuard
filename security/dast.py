@@ -144,13 +144,19 @@ def main():
     config = json.loads(Path(args.config).read_text())
     if args.compose:
         # Resolve the scanner origin from its own isolated Docker network, before any HTTP requests.
-        source = 'import ipaddress,socket,json,sys\nfrom urllib.parse import urlsplit\n'+inspect.getsource(preflight)+'\nprint(preflight(json.loads(sys.argv[1])))\n'
-        verified = subprocess.run(['docker','compose','--profile','security','run','--rm','--entrypoint','python3','zap',
+        source = ('import ipaddress,socket,json,sys,os\nfrom pathlib import Path\nfrom urllib.parse import urlsplit\n'
+                  +inspect.getsource(preflight)
+                  +"\nhome=Path(os.environ['HOME'])\nhome.mkdir(parents=True,exist_ok=True)\n"
+                  +"probe=home/('.walletguard-write-check-'+str(os.getpid()))\nprobe.write_text('ready')\nprobe.unlink()\n"
+                  +"print('Scanner home write check passed for UID '+str(os.getuid()))\n"
+                  +'print(preflight(json.loads(sys.argv[1])))\n')
+        verified = subprocess.run(['docker','compose','--profile','security','run','--rm','-T','--interactive=false','--entrypoint','python3','zap',
                                    '-c',source,json.dumps(config)],capture_output=True,text=True,encoding='utf-8',
-                                  errors='replace',timeout=120,check=True)
+                                  errors='replace',timeout=120,check=True,stdin=subprocess.DEVNULL)
         target = verified.stdout.strip().splitlines()[-1]
         if target!=config['target'].rstrip('/'):
             raise ValueError('Container preflight did not confirm the configured origin')
+        print('Container target and writable scanner home verified.',flush=True)
     else:
         target = preflight(config)
     # Compose target is resolved by a scanner container; host seed/verification uses its exact loopback publish.
@@ -196,7 +202,8 @@ def main():
     env = {**os.environ,'ZAP_AUTH_HEADER':'Authorization','ZAP_AUTH_HEADER_VALUE':'Bearer '+token,
            'ZAP_AUTH_HEADER_SITE':urlsplit(target).hostname}
     if args.compose:
-        command = ['docker','compose','--profile','security','run','--rm','zap']
+        container_name = 'walletguard-zap-'+secrets.token_hex(6)
+        command = ['docker','compose','--profile','security','run','--rm','-T','--interactive=false','--name',container_name,'zap']
     elif args.zap_jar:
         command = ['java','-Djava.awt.headless=true','-jar',str(Path(args.zap_jar).resolve()),'-cmd','-autorun',
                    str(plan_path),'-silent','-dir',str(runtime/'zap-home'),'-config','api.disablekey=false']
@@ -208,6 +215,13 @@ def main():
     if args.compose and (runtime/'zap.json').exists():
         (runtime/'zap.json').unlink()
     code,clean_log,limitation = execute_zap(command,env,timeout,output,runtime,token)
+    if args.compose and limitation:
+        # A killed Compose client does not guarantee the one-off scanner stopped.
+        try:
+            subprocess.run(['docker','rm','--force',container_name],capture_output=True,timeout=30,check=False,
+                           stdin=subprocess.DEVNULL)
+        except (OSError,subprocess.TimeoutExpired):
+            print('Scanner cleanup did not complete; the workflow teardown must remove the container.',flush=True)
     if args.compose and (runtime/'zap.json').exists():
         report_file.write_bytes((runtime/'zap.json').read_bytes())
     status = 'success' if code in (0,1,2) and report_file.exists() and 'Automation plan failures:' not in clean_log else 'failed'
