@@ -2,6 +2,8 @@
 
 A PostgreSQL-backed digital wallet API and reusable **authorized internal security testing workflow**. All funds are simulated INR minor units. No bank, payment network or real customer integration exists. The default application excludes the deliberately vulnerable teaching fixture.
 
+Verified on 6 October 2026: **58 passing tests**, successful SAST/dependency/secret/configuration/image scans, and authenticated passive and active DAST. Each DAST profile confirmed five cross-user requests were denied. Passive ZAP returned zero alerts; active ZAP retained three informational observations. See the successful [passive CI run](https://github.com/pritishhhh/WalletGuard/actions/runs/37402573152), [active CI run](https://github.com/pritishhhh/WalletGuard/actions/runs/37402854364), and committed evidence in [reports/ci-passive](reports/ci-passive) and [reports/ci-active](reports/ci-active). The [failure analysis and fix](docs/ci-dast-fix.md) explain the repaired scanner startup timeout.
+
 ## Start locally
 
 Prerequisites: Python 3.12+, Docker Desktop/Engine with Compose 2.24.4+ (running), and network access for public package/image/scanner downloads. Clone or extract this directory and work from its root.
@@ -127,6 +129,8 @@ security/              Scanner runners, parsers, policies, target configs and ZA
 teaching/              Isolated vulnerable fixture and actual behavioral detector
 scripts/               Local start, synthetic demo, dependency lock and scanner installer
 reports/sample/        Real generated sanitized scan report and JUnit evidence
+reports/ci-passive/    Passing full CI evidence with provenance and SHA-256 index
+reports/ci-active/     Passing active CI evidence with informational findings
 reports/teaching/      Intentional vulnerability evidence
 .github/workflows/     CI tests, migrations, scans, report gate and artifacts
 docs/                  Threat model, OWASP mapping, architecture, remediation and operations

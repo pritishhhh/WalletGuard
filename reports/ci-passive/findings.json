@@ -1,0 +1,97 @@
+{
+  "generated_at": "2026-10-06T02:20:36.347226+00:00",
+  "coverage": [
+    [
+      "gitleaks",
+      "repository"
+    ],
+    [
+      "pip-audit",
+      "runtime-dependencies"
+    ],
+    [
+      "security-tests",
+      "compose"
+    ],
+    [
+      "semgrep",
+      "secure-source"
+    ],
+    [
+      "trivy-config",
+      "deployment"
+    ],
+    [
+      "trivy-image",
+      "container:walletguard:local"
+    ],
+    [
+      "zap",
+      "http://wallet-api:8000:passive"
+    ]
+  ],
+  "errors": [],
+  "runs": [
+    {
+      "tool": "security-tests",
+      "scope": "compose",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/ci-passive/compose-checks.json"
+    },
+    {
+      "tool": "semgrep",
+      "scope": "secure-source",
+      "file": "reports/ci-passive/semgrep.json",
+      "started_at": "2026-10-06T02:08:16.050651+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 2.632
+    },
+    {
+      "tool": "pip-audit",
+      "scope": "runtime-dependencies",
+      "file": "reports/ci-passive/pip-audit.json",
+      "started_at": "2026-10-06T02:08:18.682870+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 0.807
+    },
+    {
+      "tool": "trivy-config",
+      "scope": "deployment",
+      "file": "reports/ci-passive/trivy-config.json",
+      "started_at": "2026-10-06T02:08:19.490297+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 2.469
+    },
+    {
+      "tool": "gitleaks",
+      "scope": "repository",
+      "file": "reports/ci-passive/gitleaks.json",
+      "started_at": "2026-10-06T02:08:21.959321+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 0.493
+    },
+    {
+      "tool": "trivy-image",
+      "scope": "container:walletguard:local",
+      "file": "reports/ci-passive/trivy-image.json",
+      "started_at": "2026-10-06T02:09:01.809897+00:00",
+      "exit_code": 0,
+      "status": "success",
+      "duration_seconds": 5.872
+    },
+    {
+      "tool": "zap",
+      "scope": "http://wallet-api:8000:passive",
+      "status": "success",
+      "exit_code": 0,
+      "file": "reports/ci-passive/zap.json",
+      "started_at": "2026-10-06T02:09:07.829939+00:00"
+    }
+  ],
+  "findings": []
+}

@@ -1,4 +1,23 @@
-# Observed results — 3 October 2026
+# Observed results
+
+## Full GitHub Actions acceptance — 6 October 2026
+
+Both profiles passed against commit `6a33f5cf1493c71d0a66ac287e92a0de7b60fbd5`: [passive run 37402573152](https://github.com/pritishhhh/WalletGuard/actions/runs/37402573152) and [active run 37402854364](https://github.com/pritishhhh/WalletGuard/actions/runs/37402854364). These runs exercised the actual Docker deployment on Linux, including migrations, readiness, authenticated requests and the built-image scan.
+
+| Check | Verified result in both full CI runs |
+|---|---|
+| Behavioral/security/workflow tests | **58 passed**, zero failures or errors; passive 17.896 seconds, active 17.380 seconds |
+| Semgrep, pip-audit and Gitleaks | Completed successfully with zero findings |
+| Trivy configuration and built image | Completed successfully with zero findings; Compose policy checks also passed |
+| Authenticated API identity | Expected HTTP 200 |
+| Cross-user authorization | Five protected requests returned HTTP 404 in each profile |
+| Passive ZAP | Automation Framework completed; zero alerts |
+| Active ZAP | Automation Framework completed; one informational User Agent Fuzzer alert with three instances, retained as three informational observations |
+| Reconciliation and consolidated gate | Passed; every required scanner coverage entry succeeded |
+
+Sanitized raw outputs, JUnit, authorization checks, reconciliation, unified reports and run/commit provenance are committed in [reports/ci-passive](../reports/ci-passive) and [reports/ci-active](../reports/ci-active). Each snapshot includes a SHA-256 index; report line endings are fixed to LF so evidence hashes remain consistent across platforms. [CI failure analysis](ci-dast-fix.md) documents the startup failure, fix and passing retests. These are measured results for the tested commit and advisory database state, not a guarantee against all vulnerabilities.
+
+## Historical native verification — 3 October 2026
 
 | Check | Actual observation |
 |---|---|
@@ -25,5 +44,5 @@ reports/sample is generated from actual current tool outputs plus the real activ
 
 ## Truthful resume bullets
 
-- Built a FastAPI/PostgreSQL wallet API with Argon2id authentication, ownership checks, an immutable double-entry ledger and database-backed idempotency; passed 54 behavioral/security tests, including 64 parallel withdrawals with zero overspend and balanced reconciliation.
-- Implemented an authorized API security pipeline using Semgrep, pip-audit, Gitleaks, Trivy configuration checks and authenticated OWASP ZAP passive/active scans, with real JSON/HTML reports and expiring finding exceptions; demonstrated detection and secure retests for isolated BOLA, SQL injection and unsafe CORS fixtures.
+- Built a FastAPI/PostgreSQL wallet API with Argon2id authentication, ownership checks, an immutable double-entry ledger and database-backed idempotency; passed 58 behavioral/security tests, including 64 parallel withdrawals with zero overspend and balanced reconciliation.
+- Implemented a passing CI security pipeline using Semgrep, pip-audit, Gitleaks, Trivy configuration/image checks and authenticated OWASP ZAP passive/active scans; verified five cross-user denials per profile and documented detection, fixes and secure retests for isolated BOLA, SQL injection and unsafe CORS fixtures.

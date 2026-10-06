@@ -1,0 +1,17 @@
+{
+  "reports/ci-passive/authorization-checks.json": "168224e7b0a2774bc9a2609bbadd6c946cd8321f62c99e0641275a58916587a7",
+  "reports/ci-passive/compose-checks.json": "98ac5a9b276b78ddbd03c7ccab350505fa1e11237767470116b6371e6323131a",
+  "reports/ci-passive/findings.html": "611130701212f75cbdb1383bfbdb94adab729d234e417413a0ce3c450e1b9c00",
+  "reports/ci-passive/findings.json": "03b1c69ae3d8acd233c8ad750b986265e065016a20b937dc742235b86676bd81",
+  "reports/ci-passive/findings.md": "05b6d7026a8dc7d0cecf1b749f247beaf3e768bffed40a556f54305b977b81f6",
+  "reports/ci-passive/gitleaks.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "reports/ci-passive/manifest.json": "15f37702ffce8e150e15c0a90a25245466e6529244ec605550c904851ba049f0",
+  "reports/ci-passive/pip-audit.json": "1570d591d6185c6171b243eb85a9e60f5c12521d464b97e8c4fef41b87ca910a",
+  "reports/ci-passive/provenance.json": "641f72267731132aeef4a61121128893beb17b296b4b3d64a3c3e29c892af1b7",
+  "reports/ci-passive/pytest.xml": "c8dcfad4fecd183405ac3163df26bf9ec17b195237d7fa69030e3a55569b9afd",
+  "reports/ci-passive/reconciliation.json": "414972e861838dbdb7a5bb32e5f6082b99eed050c23d1ec592433a6c51e67e03",
+  "reports/ci-passive/semgrep.json": "a37107206d9b6fa54c2c5f303dc7f75226d6bd28e4a22856be6f4734d36cffe8",
+  "reports/ci-passive/trivy-config.json": "c182b3a27a627cd4d6523294eaf3ba0313e39ecade6404ddae4defddfef2498a",
+  "reports/ci-passive/trivy-image.json": "e63d409edf6c49f98bf0bf121a7cce0ba060c48a3e56a4c6c6cb2b87c001dece",
+  "reports/ci-passive/zap.json": "e8c583f1db0fe9ce731c0237b051cab87486aaf501123632c5048484cfdbfd73"
+}

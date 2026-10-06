@@ -1,0 +1,9 @@
+{
+  "source": "GitHub Actions artifact",
+  "repository": "https://github.com/pritishhhh/WalletGuard",
+  "run_url": "https://github.com/pritishhhh/WalletGuard/actions/runs/37402573152",
+  "tested_commit": "6a33f5cf1493c71d0a66ac287e92a0de7b60fbd5",
+  "profile": "passive",
+  "snapshot": "Sanitized real outputs; LF line endings",
+  "redaction": "Credentials, host workspace paths and public base-image GPG fingerprint metadata"
+}

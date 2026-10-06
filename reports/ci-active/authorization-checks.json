@@ -1,0 +1,11 @@
+{
+  "target": "http://wallet-api:8000",
+  "identity_status": 200,
+  "checks": {
+    "cross_wallet": 404,
+    "cross_history": 404,
+    "cross_fund": 404,
+    "cross_transaction": 404,
+    "cross_transfer": 404
+  }
+}

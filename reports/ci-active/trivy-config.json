@@ -1,0 +1,30 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.75.0"
+  },
+  "ReportID": "01a10efb-5b77-7d57-84aa-c31f07721d3b",
+  "CreatedAt": "2026-10-06T02:11:56.407876412Z",
+  "ArtifactID": "sha256:138467c037a2333ba7b50d2e5a9b65030d5fad4c3528b4b6fcf5e47d05b8def9",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/pritishhhh/WalletGuard",
+    "Branch": "main",
+    "Commit": "6a33f5cf1493c71d0a66ac287e92a0de7b60fbd5",
+    "CommitMsg": "Fix ZAP startup with writable user home and offline browser setup",
+    "Author": "pritishhhh <pritish.arora1328@gmail.com>",
+    "Committer": "pritishhhh <pritish.arora1328@gmail.com>"
+  },
+  "Results": [
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "MisconfSummary": {
+        "Successes": 27,
+        "Failures": 0
+      }
+    }
+  ]
+}
