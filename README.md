@@ -6,6 +6,8 @@ Verified on 6 October 2026: **58 passing tests**, successful SAST/dependency/sec
 
 ## Start locally
 
+For Vercel, the API entrypoint is `main:app`. Follow [the Vercel deployment guide](docs/vercel.md) to configure hosted PostgreSQL, exact allowed hosts, production settings and migrations before redeploying.
+
 Prerequisites: Python 3.12+, Docker Desktop/Engine with Compose 2.24.4+ (running), and network access for public package/image/scanner downloads. Clone or extract this directory and work from its root.
 
 ```sh

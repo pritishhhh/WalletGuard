@@ -1,7 +1,35 @@
 import copy
+import runpy
+import tomllib
 from pathlib import Path
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 import yaml
 from security.config_check import checks
+
+
+def test_vercel_exports_real_api_and_serves_production_health(monkeypatch):
+    monkeypatch.setenv('DATABASE_URL',
+                       'postgresql+psycopg://u:syntheticstrongpassword@127.0.0.1:1/wg?sslmode=verify-full')
+    monkeypatch.setenv('WG_PROFILE', 'production')
+    monkeypatch.setenv('WG_LOCAL_FUNDING', 'false')
+    monkeypatch.setenv('WG_ALLOWED_HOSTS', 'walletguard.example')
+    config = tomllib.loads(Path('pyproject.toml').read_text())
+    module, attribute = config['tool']['vercel']['entrypoint'].split(':')
+    app = runpy.run_module(module)[attribute]
+    assert isinstance(app, FastAPI)
+    try:
+        with TestClient(app, base_url='https://walletguard.example') as client:
+            response = client.get('/health')
+        assert response.status_code == 200
+        assert response.json() == {'status': 'alive', 'simulation': True}
+        assert response.headers['Strict-Transport-Security'].startswith('max-age=')
+        assert app.state.settings.profile == 'production'
+        assert not app.state.settings.local_funding
+        assert {'/wallets', '/transfers', '/ready'} <= {route.path for route in app.routes}
+        assert app.docs_url is None
+    finally:
+        app.state.engine.dispose()
 
 
 def test_default_compose_and_unsafe_deployment_detection():
