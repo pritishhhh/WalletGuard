@@ -8,6 +8,14 @@ import yaml
 from security.config_check import checks
 
 
+def test_vercel_dependency_manifest_includes_full_pinned_runtime():
+    config = tomllib.loads(Path('pyproject.toml').read_text())
+    requirements = {line.strip() for line in Path('requirements.txt').read_text().splitlines()
+                    if line.strip() and not line.startswith('#')}
+    assert set(config['project']['dependencies']) == requirements
+    assert 'argon2-cffi==25.1.0' in requirements
+
+
 def test_vercel_exports_real_api_and_serves_production_health(monkeypatch):
     monkeypatch.setenv('DATABASE_URL',
                        'postgresql+psycopg://u:syntheticstrongpassword@127.0.0.1:1/wg?sslmode=verify-full')

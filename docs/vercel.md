@@ -4,7 +4,7 @@ The repository exports the actual WalletGuard application as `main:app` and expl
 
 ## Project configuration
 
-Import pritishhhh/WalletGuard with the repository root as Root Directory and FastAPI as Framework Preset. Leave Build Command and Output Directory at their framework defaults. The pinned requirements.txt installs the API dependencies; no Docker build, uvicorn command or static output directory is needed.
+Import pritishhhh/WalletGuard with the repository root as Root Directory and FastAPI as Framework Preset. Leave Build Command and Output Directory at their framework defaults. The pinned dependencies in pyproject.toml install the full API runtime, including argon2-cffi for password hashing. They match requirements.txt; scripts/lock.py updates both, and CI rejects divergence. Vercel uses the project manifest when present, so a pyproject.toml containing metadata without dependencies can build but produce a function missing its imports. No Docker build, uvicorn command or static output directory is needed.
 
 Vercel hosts the API function, not the PostgreSQL container or security scanner containers. Connect a hosted PostgreSQL database reachable from Vercel. Set these variables in Vercel Project Settings for each environment you deploy:
 
