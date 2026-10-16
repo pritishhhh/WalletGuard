@@ -1,4 +1,5 @@
 import os
+import certifi
 from dataclasses import dataclass
 from sqlalchemy.engine import make_url
 
@@ -37,9 +38,22 @@ class Settings:
 
     @classmethod
     def from_env(cls):
-        profile = os.getenv("WG_PROFILE", "local")
+        vercel = os.getenv("VERCEL") == "1"
+        profile = os.getenv("WG_PROFILE", "production" if vercel else "local")
+        database_url = os.environ["DATABASE_URL"]
+        if vercel:
+            # Keep transaction/session semantics on a direct provider connection.
+            url = make_url(os.getenv("DATABASE_URL_UNPOOLED") or database_url)
+            if url.drivername in ("postgres", "postgresql"):
+                url = url.set(drivername="postgresql+psycopg")
+            if profile == "production":
+                if url.query.get("sslmode") == "require":
+                    url = url.update_query_dict({"sslmode": "verify-full"})
+                if url.query.get("sslmode") == "verify-full" and "sslrootcert" not in url.query:
+                    url = url.update_query_dict({"sslrootcert": certifi.where()})
+            database_url = url.render_as_string(hide_password=False)
         return cls(
-            database_url=os.environ["DATABASE_URL"],
+            database_url=database_url,
             profile=profile,
             local_funding=os.getenv("WG_LOCAL_FUNDING", "true" if profile == "local" else "false") == "true",
             auth_limit=int(os.getenv("WG_AUTH_LIMIT", "30")),

@@ -156,6 +156,11 @@ def create_app(settings=None):
                              "method": request.method, "route": route_name, "status": response.status_code}))
         return response
 
+    @app.get("/", tags=["operations"])
+    def index():
+        return {"service": "WalletGuard", "simulation": True,
+                "health": "/health", "readiness": "/ready", "api_schema": "/openapi.json"}
+
     @app.get("/health", tags=["operations"])
     def health():
         return {"status": "alive", "simulation": True}
